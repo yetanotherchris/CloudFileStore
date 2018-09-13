@@ -1,0 +1,16 @@
+# https://docs.travis-ci.com/user/environment-variables/
+language: csharp
+dotnet: 2.1.302
+
+branches:
+  only:
+  - master
+
+script:
+  - dotnet restore
+  - dotnet build -c Release  
+  - pushd src/CloudFileStore.Tests
+  - dotnet test
+  - popd
+  - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
+  - dotnet nuget push "src/CloudFileStore/bin/Release/CloudFileStore.1.0.$TRAVIS_BUILD_NUMBER.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
