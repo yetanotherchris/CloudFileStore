@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudFileStore", "CloudFileStore\CloudFileStore.csproj", "{7BD097AC-5F50-4106-B665-6AA70E61376D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudFileStore", "src\CloudFileStore\CloudFileStore.csproj", "{7BD097AC-5F50-4106-B665-6AA70E61376D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudFileStore.Tests", "CloudFileStore.Tests\CloudFileStore.Tests.csproj", "{F67F61C2-B507-461D-A15F-4B36BD4736EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudFileStore.Tests", "src\CloudFileStore.Tests\CloudFileStore.Tests.csproj", "{F67F61C2-B507-461D-A15F-4B36BD4736EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
