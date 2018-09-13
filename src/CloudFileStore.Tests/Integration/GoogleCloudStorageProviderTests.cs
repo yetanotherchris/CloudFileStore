@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,13 +35,14 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
 
 			// when
-			await provider.SaveTextFileAsync("foo.json", "content here");
+			await provider.SaveTextFileAsync(filename, "content here");
 
 			// then
-			string json = await provider.LoadTextFileAsync("foo.json");
-			json.ShouldNotBeNullOrWhiteSpace();
+			string content = await provider.LoadTextFileAsync(filename);
+			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
 		[Fact]
