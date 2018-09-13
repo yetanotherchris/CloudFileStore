@@ -22,6 +22,8 @@ namespace CloudFileStore.Tests.Integration
 			// - type .\appsettings.development.json | dotnet user-secrets set
 
 			var builder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json")
 				.AddUserSecrets(typeof(S3StorageProviderTests).Assembly, true)
 				.AddEnvironmentVariables();
 
