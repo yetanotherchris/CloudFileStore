@@ -58,7 +58,8 @@ namespace CloudFileStore.GoogleCloud
 				using (var streamWriter = new StreamWriter(stream))
 				{
 					await streamWriter.WriteAsync(fileContent);
-					stream.Position = 0;
+					streamWriter.Flush();
+
 					await _storageClient.UploadObjectAsync(_configuration.BucketName, filePath, null, stream);
 				}
 			}

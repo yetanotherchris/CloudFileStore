@@ -12,11 +12,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Google.Cloud.Storage.V1" Version="2.2.0" />
+		<PackageReference Include="AWSSDK.S3" Version="3.3.23.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="AWS\" />
 		<Folder Include="Azure\" />
 	</ItemGroup>
 </Project>

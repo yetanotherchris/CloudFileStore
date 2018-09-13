@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CloudFileStore.GoogleCloud;
+using CloudFileStore.AWS;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using Xunit;
 
 namespace CloudFileStore.Tests.Integration
 {
-	public class GoogleCloudStorageProviderTests
+	public class S3StorageProviderTests
 	{
-		private readonly GoogleCloudConfiguration _googleConfiguration;
+		private readonly S3Configuration _s3Configuration;
 
-		public GoogleCloudStorageProviderTests()
+		public S3StorageProviderTests()
 		{
 			// Get configuration from appsettings.json
 			var builder = new ConfigurationBuilder()
@@ -23,17 +23,17 @@ namespace CloudFileStore.Tests.Integration
 				.AddEnvironmentVariables();
 
 			IConfigurationRoot configuration = builder.Build();
-			IConfigurationSection section = configuration.GetSection("GoogleCloudConfiguration");
+			IConfigurationSection section = configuration.GetSection("S3Configuration");
 
-			_googleConfiguration = new GoogleCloudConfiguration();
-			section.Bind(_googleConfiguration);
+			_s3Configuration = new S3Configuration();
+			section.Bind(_s3Configuration);
 		}
 
 		[Fact]
 		public async Task should_save_text_file_content()
 		{
 			// given
-			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			var provider = new S3StorageProvider(_s3Configuration);
 
 			// when
 			await provider.SaveTextFileAsync("foo.json", "content here");
@@ -47,7 +47,7 @@ namespace CloudFileStore.Tests.Integration
 		public async Task should_load_text_file_content()
 		{
 			// given
-			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			var provider = new S3StorageProvider(_s3Configuration);
 
 			// when
 			string json = await provider.LoadTextFileAsync("28DT24.json");
@@ -60,7 +60,7 @@ namespace CloudFileStore.Tests.Integration
 		public async Task should_list_files()
 		{
 			// given
-			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			var provider = new S3StorageProvider(_s3Configuration);
 
 			// when
 			IEnumerable<string> files = await provider.ListFilesAsync();

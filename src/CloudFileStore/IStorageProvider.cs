@@ -13,4 +13,11 @@ namespace CloudFileStore
 
 		Task SaveTextFileAsync(string filePath, string fileContent);
 	}
+
+	// TODO:
+	// - Paging for List
+	// - Graceful error handling
+	// - Binary load, save
+	// - Delete
+	// - Update?
 }
