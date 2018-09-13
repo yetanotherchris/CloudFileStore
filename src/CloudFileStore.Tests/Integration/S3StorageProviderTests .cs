@@ -16,11 +16,13 @@ namespace CloudFileStore.Tests.Integration
 
 		public S3StorageProviderTests()
 		{
-			// Get configuration from appsettings.json
+			// Get configuration from user secrets:
+			// https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-2.1&tabs=windows
+			// - %APPDATA%\Microsoft\UserSecrets\CloudFileStore.Tests\secrets.json
+			// - type .\appsettings.development.json | dotnet user-secrets set
+
 			var builder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-				.AddJsonFile($"appsettings.development.json", optional: true)
+				.AddUserSecrets(typeof(S3StorageProviderTests).Assembly, true)
 				.AddEnvironmentVariables();
 
 			IConfigurationRoot configuration = builder.Build();

@@ -18,9 +18,7 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// Get configuration from appsettings.json
 			var builder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-				.AddJsonFile($"appsettings.development.json", optional: true)
+				.AddUserSecrets(typeof(S3StorageProviderTests).Assembly, true)
 				.AddEnvironmentVariables();
 
 			IConfigurationRoot configuration = builder.Build();
