@@ -50,12 +50,14 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			await provider.SaveTextFileAsync(filename, "content here");
 
 			// when
-			string json = await provider.LoadTextFileAsync("28DT24.json");
+			string content = await provider.LoadTextFileAsync(filename);
 
 			// then
-			json.ShouldNotBeNullOrWhiteSpace();
+			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
 		[Fact]
@@ -65,11 +67,56 @@ namespace CloudFileStore.Tests.Integration
 			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
 
 			// when
-			IEnumerable<string> files = await provider.ListFilesAsync();
+			IEnumerable<string> files = await provider.ListFilesAsync(1);
+			IEnumerable<string> files2 = await provider.ListFilesAsync(1);
 
 			// then
 			files.Count().ShouldBeGreaterThanOrEqualTo(1);
 			files.FirstOrDefault(x => x == "28DT24.json").ShouldNotBeNull();
+		}
+
+		[Fact]
+		public async Task should_check_file_exists()
+		{
+			// given
+			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			await provider.SaveTextFileAsync(filename, "content here");
+
+			// when
+			bool exists = await provider.FileExistsAsync(filename);
+
+			// then
+			exists.ShouldBeTrue();
+		}
+
+		[Fact]
+		public async Task should_handle_missing_file()
+		{
+			// given
+			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+
+			// when
+			bool exists = await provider.FileExistsAsync("this file doesn't exist");
+
+			// then
+			exists.ShouldBeFalse();
+		}
+
+		[Fact]
+		public async Task should_delete_file()
+		{
+			// given
+			var provider = new GoogleCloudStorageProvider(_googleConfiguration);
+			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			await provider.SaveTextFileAsync(filename, "content here");
+
+			// when
+			await provider.DeleteFileAsync(filename);
+
+			// then
+			bool exists = await provider.FileExistsAsync(filename);
+			exists.ShouldBeFalse();
 		}
 	}
 }

@@ -7,17 +7,20 @@ namespace CloudFileStore
 {
 	public interface IStorageProvider
 	{
-		Task<IEnumerable<string>> ListFilesAsync();
+		Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true);
 
 		Task<string> LoadTextFileAsync(string filename);
 
-		Task SaveTextFileAsync(string filePath, string fileContent);
+		Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain");
+
+		Task DeleteFileAsync(string filename);
+
+		Task<bool> FileExistsAsync(string filename);
 	}
 
 	// TODO:
 	// - Paging for List
 	// - Graceful error handling
 	// - Binary load, save
-	// - Delete
 	// - Update?
 }

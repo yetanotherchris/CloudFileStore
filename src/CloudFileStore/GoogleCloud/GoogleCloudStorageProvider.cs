@@ -25,9 +25,16 @@ namespace CloudFileStore.GoogleCloud
 			_storageClient = StorageClient.Create(credential);
 		}
 
-		public async Task<IEnumerable<string>> ListFilesAsync()
+		public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)
 		{
-			var objects = await _storageClient.ListObjectsAsync(_configuration.BucketName).ReadPageAsync(100);
+			var options = new ListObjectsOptions()
+			{
+				PageSize = pageSize,
+			};
+
+			var objects = await _storageClient.ListObjectsAsync(_configuration.BucketName, "", options)
+											  .ReadPageAsync(pageSize);
+
 			return objects.Select(x => x.Name);
 		}
 
@@ -51,7 +58,7 @@ namespace CloudFileStore.GoogleCloud
 			return "";
 		}
 
-		public async Task SaveTextFileAsync(string filePath, string fileContent)
+		public async Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain")
 		{
 			using (Stream stream = new MemoryStream())
 			{
@@ -60,9 +67,29 @@ namespace CloudFileStore.GoogleCloud
 					await streamWriter.WriteAsync(fileContent);
 					streamWriter.Flush();
 
-					await _storageClient.UploadObjectAsync(_configuration.BucketName, filePath, null, stream);
+					await _storageClient.UploadObjectAsync(_configuration.BucketName, filePath, contentType, stream);
 				}
 			}
+		}
+
+		public async Task DeleteFileAsync(string filename)
+		{
+			await _storageClient.DeleteObjectAsync(_configuration.BucketName, filename);
+		}
+
+		public async Task<bool> FileExistsAsync(string filename)
+		{
+			try
+			{
+				var storageObject = await _storageClient.GetObjectAsync(_configuration.BucketName, filename);
+				if (storageObject != null)
+					return true;
+			}
+			catch (Exception)
+			{
+			}
+
+			return false;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace CloudFileStore.AWS
 	{
 		private readonly S3Configuration _configuration;
 		private readonly AmazonS3Client _s3Client;
+		private string _continuationToken;
 
 		public S3StorageProvider(S3Configuration configuration)
 		{
@@ -21,19 +23,34 @@ namespace CloudFileStore.AWS
 			_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
 		}
 
-		public async Task<IEnumerable<string>> ListFilesAsync()
+		public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)
 		{
-			ListObjectsResponse objects = await _s3Client.ListObjectsAsync(_configuration.BucketName);
-			return objects.S3Objects.Select(x => x.Key);
+			var request = new ListObjectsV2Request()
+			{
+				MaxKeys = pageSize,
+				BucketName = _configuration.BucketName,
+			};
+
+			if (pagingEnabled)
+				request.ContinuationToken = _continuationToken;
+
+			ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request);
+			_continuationToken = response.ContinuationToken;
+
+			return response.S3Objects.Select(x => x.Key);
 		}
 
 		public async Task<string> LoadTextFileAsync(string filename)
 		{
-			GetObjectResponse response = await _s3Client.GetObjectAsync(new GetObjectRequest
+			var request = new GetObjectRequest
 			{
 				BucketName = _configuration.BucketName,
 				Key = filename
-			});
+			};
+			GetObjectResponse response = await _s3Client.GetObjectAsync(request);
+
+			if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+				return null;
 
 			using (var reader = new StreamReader(response.ResponseStream))
 			{
@@ -41,7 +58,7 @@ namespace CloudFileStore.AWS
 			}
 		}
 
-		public async Task SaveTextFileAsync(string filePath, string fileContent)
+		public async Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain")
 		{
 			// S3Client handles the disposing of the Stream
 			Stream stream = new MemoryStream();
@@ -58,6 +75,39 @@ namespace CloudFileStore.AWS
 			};
 
 			await _s3Client.PutObjectAsync(putRequest);
+		}
+
+		public async Task DeleteFileAsync(string filename)
+		{
+			var request = new DeleteObjectRequest()
+			{
+				BucketName = _configuration.BucketName,
+				Key = filename
+			};
+
+			await _s3Client.DeleteObjectAsync(request);
+		}
+
+		public async Task<bool> FileExistsAsync(string filename)
+		{
+			var request = new GetObjectRequest
+			{
+				BucketName = _configuration.BucketName,
+				Key = filename
+			};
+
+			try
+			{
+				GetObjectResponse response = await _s3Client.GetObjectAsync(request);
+
+				if (response != null || response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+					return true;
+			}
+			catch (Exception)
+			{
+			}
+
+			return false;
 		}
 	}
 }
