@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Api.Gax;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using Newtonsoft.Json;
@@ -14,6 +15,7 @@ namespace CloudFileStore.GoogleCloud
 	{
 		private readonly GoogleCloudConfiguration _configuration;
 		private readonly StorageClient _storageClient;
+		private string _pagingToken;
 
 		public GoogleCloudStorageProvider(GoogleCloudConfiguration configuration)
 		{
@@ -32,10 +34,15 @@ namespace CloudFileStore.GoogleCloud
 				PageSize = pageSize,
 			};
 
-			var objects = await _storageClient.ListObjectsAsync(_configuration.BucketName, "", options)
+			if (pagingEnabled)
+				options.PageToken = _pagingToken;
+
+			Page<Object> page = await _storageClient.ListObjectsAsync(_configuration.BucketName, "", options)
 											  .ReadPageAsync(pageSize);
 
-			return objects.Select(x => x.Name);
+			_pagingToken = page.NextPageToken;
+
+			return page.Select(x => x.Name);
 		}
 
 		public async Task<string> LoadTextFileAsync(string filename)

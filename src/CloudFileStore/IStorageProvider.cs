@@ -19,8 +19,8 @@ namespace CloudFileStore
 	}
 
 	// TODO:
-	// - Paging for List
 	// - Graceful error handling
 	// - Binary load, save
 	// - Update?
+	// - Batching?
 }

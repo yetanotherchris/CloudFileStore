@@ -35,7 +35,7 @@ namespace CloudFileStore.AWS
 				request.ContinuationToken = _continuationToken;
 
 			ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request);
-			_continuationToken = response.ContinuationToken;
+			_continuationToken = response.NextContinuationToken;
 
 			return response.S3Objects.Select(x => x.Key);
 		}
