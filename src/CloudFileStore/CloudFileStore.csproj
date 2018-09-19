@@ -14,9 +14,6 @@
 		<PackageReference Include="Google.Cloud.Storage.V1" Version="2.3.0-beta01" />
 		<PackageReference Include="AWSSDK.S3" Version="3.3.23.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Azure\" />
+		<PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
 	</ItemGroup>
 </Project>

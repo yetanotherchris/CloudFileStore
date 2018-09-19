@@ -14,20 +14,9 @@ namespace CloudFileStore.Tests.Integration
 	{
 		private GoogleCloudConfiguration _googleConfiguration;
 
-		public override void ReadConfiguration()
+		public GoogleCloudStorageProviderTests()
 		{
-			// Get configuration from appsettings.json
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json")
-				.AddUserSecrets(typeof(S3StorageProviderTests).Assembly, true)
-				.AddEnvironmentVariables();
-
-			IConfigurationRoot configuration = builder.Build();
-			IConfigurationSection section = configuration.GetSection("GoogleCloudConfiguration");
-
-			_googleConfiguration = new GoogleCloudConfiguration();
-			section.Bind(_googleConfiguration);
+			_googleConfiguration = BindConfiguration<GoogleCloudConfiguration>("GoogleCloudConfiguration");
 		}
 
 		public override IStorageProvider CreateStorageProvider()

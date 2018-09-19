@@ -19,6 +19,7 @@ namespace CloudFileStore
 	}
 
 	// TODO:
+	// - Prefixes for filenames
 	// - Graceful error handling
 	// - Binary load, save
 	// - Update?

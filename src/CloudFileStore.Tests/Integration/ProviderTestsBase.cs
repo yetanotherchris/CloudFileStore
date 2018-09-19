@@ -1,22 +1,39 @@
-﻿using Shouldly;
+﻿using Microsoft.Extensions.Configuration;
+using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CloudFileStore.Tests.Integration
 {
-	public abstract class ProviderTestsBase
+	public abstract class ProviderTestsBase : IDisposable
 	{
-		public abstract void ReadConfiguration();
+		public T BindConfiguration<T>(string sectionName) where T : new()
+		{
+			// Get configuration from user secrets:
+			// https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-2.1&tabs=windows
+			// - %APPDATA%\Microsoft\UserSecrets\CloudFileStore.Tests\secrets.json
+			// - .\appsettings.development.json | dotnet user-secrets set
+
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json")
+				.AddUserSecrets(typeof(ProviderTestsBase).Assembly, true)
+				.AddEnvironmentVariables();
+
+			IConfigurationRoot configuration = builder.Build();
+			IConfigurationSection section = configuration.GetSection(sectionName);
+
+			T instance = new T();
+			section.Bind(instance);
+
+			return instance;
+		}
 
 		public abstract IStorageProvider CreateStorageProvider();
-
-		public ProviderTestsBase()
-		{
-			ReadConfiguration();
-		}
 
 		protected async Task CreateTestFile(string filename)
 		{
@@ -77,6 +94,28 @@ namespace CloudFileStore.Tests.Integration
 		}
 
 		[Fact]
+		public async Task should_list_files_without_pagination()
+		{
+			// given
+			IStorageProvider provider = CreateStorageProvider();
+			for (int i = 0; i < 10; i++)
+			{
+				string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+				await CreateTestFile(filename);
+			}
+
+			// when
+			IEnumerable<string> firstPageOfFiles = await provider.ListFilesAsync(5, false);
+			IEnumerable<string> secondPageOfFiles = await provider.ListFilesAsync(5, false);
+
+			// then
+			firstPageOfFiles.Count().ShouldBeGreaterThanOrEqualTo(1);
+			secondPageOfFiles.Count().ShouldBeGreaterThanOrEqualTo(1);
+
+			firstPageOfFiles.First().ShouldBe(secondPageOfFiles.First());
+		}
+
+		[Fact]
 		public async Task should_check_file_exists()
 		{
 			// given
@@ -118,6 +157,17 @@ namespace CloudFileStore.Tests.Integration
 			// then
 			bool exists = await provider.FileExistsAsync(filename);
 			exists.ShouldBeFalse();
+		}
+
+		public void Dispose()
+		{
+			// Remove everything from the bucket once we're finished
+			var provider = CreateStorageProvider();
+			var files = provider.ListFilesAsync(100, false).GetAwaiter().GetResult();
+			foreach (string filename in files)
+			{
+				provider.DeleteFileAsync(filename).GetAwaiter().GetResult();
+			}
 		}
 	}
 }
