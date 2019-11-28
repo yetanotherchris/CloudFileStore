@@ -10,7 +10,16 @@ namespace CloudFileStore.AWS
 		public string BucketName { get; set; }
 		public string SecretKey { get; set; }
 		public string AccessKey { get; set; }
-		public string Region { get; set; } // e.g. eu-west-1
+		
+		/// <summary>
+		/// An optional token, if using AWS Session authentication.
+		/// </summary>
+		public string Token { get;set; }
+		
+		/// <summary>
+		/// For example eu-west-1
+		/// </summary>
+		public string Region { get; set; }
 
 		[JsonIgnore]
 		public RegionEndpoint RegionEndpoint

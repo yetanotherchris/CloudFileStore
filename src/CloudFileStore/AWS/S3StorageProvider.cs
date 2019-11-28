@@ -19,7 +19,17 @@ namespace CloudFileStore.AWS
 		{
 			_configuration = configuration;
 
-			var credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
+			AWSCredentials credentials;
+            
+			if (!string.IsNullOrEmpty(configuration.Token))
+			{
+				credentials = new SessionAWSCredentials(_configuration.AccessKey, _configuration.SecretKey, _configuration.Token);
+			}
+			else
+			{
+				credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
+			}
+			
 			_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
 		}
 
