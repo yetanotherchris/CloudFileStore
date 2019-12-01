@@ -1,5 +1,5 @@
 language: csharp
-dotnet: 2.1.302
+dotnet: 3.0
 branches:
   only:
   - master
