@@ -7,6 +7,7 @@ using CloudFileStore.GoogleCloud;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CloudFileStore.Tests.Integration
 {
@@ -14,9 +15,10 @@ namespace CloudFileStore.Tests.Integration
 	{
 		private GoogleCloudConfiguration _googleConfiguration;
 
-		public GoogleCloudStorageProviderTests()
+		public GoogleCloudStorageProviderTests(ITestOutputHelper outputHelper)
 		{
 			_googleConfiguration = BindConfiguration<GoogleCloudConfiguration>("GoogleCloudConfiguration");
+			outputHelper.WriteLine($"Google bucket: ${_googleConfiguration.BucketName}");
 		}
 
 		public override IStorageProvider CreateStorageProvider()

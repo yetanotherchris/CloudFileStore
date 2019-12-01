@@ -1,4 +1,5 @@
 using CloudFileStore.Azure;
+using Xunit.Abstractions;
 
 namespace CloudFileStore.Tests.Integration
 {
@@ -6,9 +7,10 @@ namespace CloudFileStore.Tests.Integration
 	{
 		private AzureBlobConfiguration _azureBlobConfiguration;
 
-		public AzureBlogStorageProviderTests()
+		public AzureBlogStorageProviderTests(ITestOutputHelper outputHelper)
 		{
 			_azureBlobConfiguration = BindConfiguration<AzureBlobConfiguration>("AzureBlobConfiguration");
+			outputHelper.WriteLine($"Azure container: ${_azureBlobConfiguration.ContainerName}");
 		}
 
 		public override IStorageProvider CreateStorageProvider()
