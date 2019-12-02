@@ -38,6 +38,9 @@ script:
   - root=$(pwd -P)
   - export DOTNET_INSTALL_DIR="$root/.dotnetcli"
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
+  - echo $PATH
+  - echo $DOTNET_INSTALL_DIR
+  - echo $(whereis dotnet)
   - dotnet restore
   - dotnet build -c Release
   - pushd src/CloudFileStore.Tests
