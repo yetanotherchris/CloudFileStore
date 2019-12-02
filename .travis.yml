@@ -41,4 +41,4 @@ script:
   - popd
   - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
   - dotnet nuget push "src/CloudFileStore/bin/Release/CloudFileStore.1.0.$TRAVIS_BUILD_NUMBER.nupkg"
-  --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
+    --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
