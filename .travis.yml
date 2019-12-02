@@ -34,6 +34,9 @@ before_install:
 
 script:
   - sudo bash ./install-cli.sh
+  - root=$(cd "$(dirname "$0")"; pwd -P)
+  - export DOTNET_INSTALL_DIR="$root/.dotnetcli"
+  - export PATH="$DOTNET_INSTALL_DIR:$PATH"
   - dotnet restore
   - dotnet build -c Release
   - pushd src/CloudFileStore.Tests
