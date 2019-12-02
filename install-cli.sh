@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-root=$(cd "$(dirname "$0")"; pwd -P)
+root=$(pwd -P)
 
 export CLI_VERSION=`cat ./global.json | grep -E '[0-9]\.[0-9]\.[a-zA-Z0-9\-]*' -o`
 export DOTNET_INSTALL_DIR="$root/.dotnetcli"
