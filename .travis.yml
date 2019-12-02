@@ -33,7 +33,7 @@ before_install:
   - mv -f travis-appsettings.config src/CloudFileStore.Tests/appsettings.json
 
 script:
-  - sudo ./install-cli.sh
+  - sudo bash ./install-cli.sh
   - dotnet restore
   - dotnet build -c Release
   - pushd src/CloudFileStore.Tests
