@@ -33,14 +33,11 @@ before_install:
   - mv -f travis-appsettings.config src/CloudFileStore.Tests/appsettings.json
 
 script:
-  - sudo bash ./install-cli.sh
-  - echo $(pwd -P)
   - root=$(pwd -P)
   - export DOTNET_INSTALL_DIR="$root/.dotnetcli"
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
-  - echo $PATH
-  - echo $DOTNET_INSTALL_DIR
-  - whereis dotnet
+  - dotnet_version=$(dotnet --version)
+  - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
   - dotnet restore
   - dotnet build -c Release
   - pushd src/CloudFileStore.Tests
