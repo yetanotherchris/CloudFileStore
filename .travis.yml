@@ -40,7 +40,7 @@ script:
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
   - echo $PATH
   - echo $DOTNET_INSTALL_DIR
-  - echo $(whereis dotnet)
+  - whereis dotnet
   - dotnet restore
   - dotnet build -c Release
   - pushd src/CloudFileStore.Tests
