@@ -11,7 +11,7 @@ script:
 - dotnet restore
 - dotnet build -c Release
 - pushd src/CloudFileStore.Tests
-- dotnet test --logger:"console;noprogress=true"
+- dotnet test -v detailed --logger:"console;noprogress=true"
 - popd
 - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
 - dotnet nuget push "src/CloudFileStore/bin/Release/CloudFileStore.1.0.$TRAVIS_BUILD_NUMBER.nupkg"
