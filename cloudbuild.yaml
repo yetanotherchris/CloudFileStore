@@ -9,8 +9,8 @@ steps:
       - --keyring=github-builds
       - --key=default-key
 
-  - name: ubuntu
-    args: ['bash', 'mv',  '-f', 'glcoud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
+  - name: bash
+    args: ['mv',  '-f', 'glcoud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
 
   - name: mcr.microsoft.com/dotnet/core/sdk:3.0
     entrypoint: dotnet
