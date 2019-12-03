@@ -40,14 +40,8 @@ namespace CloudFileStore.Tests.Integration
 			IStorageProvider provider = CreateStorageProvider();
 			await provider.SaveTextFileAsync(filename, "content here");
 		}
-		
-		[Fact]
-		public async Task test()
-		{
-			"test".ShouldBe("test");
-		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_save_text_file_content()
 		{
 			// given
@@ -62,7 +56,7 @@ namespace CloudFileStore.Tests.Integration
 			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_load_text_file_content()
 		{
 			// given
@@ -77,7 +71,7 @@ namespace CloudFileStore.Tests.Integration
 			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_list_files()
 		{
 			// given
@@ -99,7 +93,7 @@ namespace CloudFileStore.Tests.Integration
 			firstPageOfFiles.First().ShouldNotBe(secondPageOfFiles.First());
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_list_files_without_pagination()
 		{
 			// given
@@ -121,7 +115,7 @@ namespace CloudFileStore.Tests.Integration
 			firstPageOfFiles.First().ShouldBe(secondPageOfFiles.First());
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_check_file_exists()
 		{
 			// given
@@ -136,7 +130,7 @@ namespace CloudFileStore.Tests.Integration
 			exists.ShouldBeTrue();
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_handle_missing_file()
 		{
 			// given
@@ -149,7 +143,7 @@ namespace CloudFileStore.Tests.Integration
 			exists.ShouldBeFalse();
 		}
 
-		//[Fact]
+		[Fact]
 		public async Task should_delete_file()
 		{
 			// given
@@ -167,13 +161,18 @@ namespace CloudFileStore.Tests.Integration
 
 		public void Dispose()
 		{
-			// Remove everything from the bucket once we're finished
-			var provider = CreateStorageProvider();
-			var files = provider.ListFilesAsync(100, false).GetAwaiter().GetResult();
-			foreach (string filename in files)
+			Task cleanupTask = Task.Run(async () =>
 			{
-				provider.DeleteFileAsync(filename).GetAwaiter().GetResult();
-			}
+				// Remove everything from the bucket once we're finished
+				var provider = CreateStorageProvider();
+				var files = await provider.ListFilesAsync(100, false);
+				foreach (string filename in files)
+				{
+					provider.DeleteFileAsync(filename).GetAwaiter().GetResult();
+				}
+			});
+
+			Task.WaitAll(new Task[] {cleanupTask}, TimeSpan.FromSeconds(5));
 		}
 	}
 }

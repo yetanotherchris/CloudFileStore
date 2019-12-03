@@ -4,13 +4,13 @@ steps:
       - kms
       - decrypt
       - --ciphertext-file=googlecloud.appsettings.json.enc
-      - --plaintext-file=glcoud-appsettings.json
+      - --plaintext-file=gcloud-appsettings.json
       - --location=global
       - --keyring=github-builds
       - --key=default-key
 
   - name: bash
-    args: ['mv',  '-f', 'glcoud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
+    args: ['mv',  '-f', 'gcloud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
 
   - name: mcr.microsoft.com/dotnet/core/sdk:3.0
     entrypoint: dotnet
