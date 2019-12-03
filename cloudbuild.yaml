@@ -18,4 +18,4 @@ steps:
     
   - name: mcr.microsoft.com/dotnet/core/sdk:3.0
     entrypoint: dotnet
-    args: ['test', 'src/CloudFileStore.Tests/CloudFileStore.Tests.csproj', '--logger:"console;noprogress=true"', '-v d']  
+    args: ['test', 'src/CloudFileStore.Tests/CloudFileStore.Tests.csproj', '--logger:"console;noprogress=true"', '--verbosity', 'd']  

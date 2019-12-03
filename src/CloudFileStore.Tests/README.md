@@ -54,6 +54,11 @@ The most long winded of the 3...
 
 Then generate an access/secret key for the user, add to appsettings.json
 
+### Google Cloud builds
+
+Follow these instructions to generate the `googlecloud.appsettings.json` file:
+https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
+
 ### Travis
 
 Once the tests appsettings.json file is complete, update the `travis-appsettings.config.enc` file in the root 
