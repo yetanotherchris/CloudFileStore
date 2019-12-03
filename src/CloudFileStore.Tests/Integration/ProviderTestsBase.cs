@@ -41,7 +41,7 @@ namespace CloudFileStore.Tests.Integration
 			await provider.SaveTextFileAsync(filename, "content here");
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_save_text_file_content()
 		{
 			// given
@@ -56,7 +56,7 @@ namespace CloudFileStore.Tests.Integration
 			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_load_text_file_content()
 		{
 			// given
@@ -71,7 +71,7 @@ namespace CloudFileStore.Tests.Integration
 			content.ShouldNotBeNullOrWhiteSpace();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_list_files()
 		{
 			// given
@@ -93,7 +93,7 @@ namespace CloudFileStore.Tests.Integration
 			firstPageOfFiles.First().ShouldNotBe(secondPageOfFiles.First());
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_list_files_without_pagination()
 		{
 			// given
@@ -115,7 +115,7 @@ namespace CloudFileStore.Tests.Integration
 			firstPageOfFiles.First().ShouldBe(secondPageOfFiles.First());
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_check_file_exists()
 		{
 			// given
@@ -130,7 +130,7 @@ namespace CloudFileStore.Tests.Integration
 			exists.ShouldBeTrue();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_handle_missing_file()
 		{
 			// given
@@ -143,7 +143,7 @@ namespace CloudFileStore.Tests.Integration
 			exists.ShouldBeFalse();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_delete_file()
 		{
 			// given
