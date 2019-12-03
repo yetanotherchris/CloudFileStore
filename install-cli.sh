@@ -2,7 +2,7 @@
 
 root=$(pwd -P)
 
-export CLI_VERSION=`cat ./global.json | grep -E '[0-9]\.[0-9]\.[a-zA-Z0-9\-]*' -o`
+export CLI_VERSION="3.1.100-preview3-014645"
 export DOTNET_INSTALL_DIR="$root/.dotnetcli"
 export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
