@@ -36,12 +36,12 @@ script:
   - export DOTNET_INSTALL_DIR="$root/.dotnetcli"
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
   - export CLI_VERSION="3.1.100-preview3-014645"
-  - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
-  - dotnet restore
-  - dotnet build -c Release
+  - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR" 
+  - dotnet restore || travis_terminate 1
+  - dotnet build -c Release || travis_terminate 1
   - pushd src/CloudFileStore.Tests
-  - travis_wait dotnet test --logger:"console;noprogress=true"
+  - dotnet test --logger:"console;noprogress=true" || travis_terminate 1
   - popd
-  - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
+  - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER || travis_terminate 1
   - dotnet nuget push "src/CloudFileStore/bin/Release/CloudFileStore.1.0.$TRAVIS_BUILD_NUMBER.nupkg"
     --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
