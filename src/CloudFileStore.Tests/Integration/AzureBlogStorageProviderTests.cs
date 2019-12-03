@@ -7,11 +7,10 @@ namespace CloudFileStore.Tests.Integration
 	{
 		private AzureBlobConfiguration _azureBlobConfiguration;
 
-		public AzureBlogStorageProviderTests(ITestOutputHelper outputHelper)
+		public AzureBlogStorageProviderTests(ITestOutputHelper outputHelper) : base(outputHelper)
 		{
-			outputHelper.WriteLine("Trying to bind Azure");
 			_azureBlobConfiguration = BindConfiguration<AzureBlobConfiguration>("AzureBlobConfiguration");
-			outputHelper.WriteLine($"Azure container: ${_azureBlobConfiguration.ContainerName}");
+			outputHelper.WriteLine($"Azure container: {_azureBlobConfiguration.ContainerName}");
 		}
 
 		public override IStorageProvider CreateStorageProvider()

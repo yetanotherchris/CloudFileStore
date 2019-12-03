@@ -15,11 +15,10 @@ namespace CloudFileStore.Tests.Integration
 	{
 		private GoogleCloudConfiguration _googleConfiguration;
 
-		public GoogleCloudStorageProviderTests(ITestOutputHelper outputHelper)
+		public GoogleCloudStorageProviderTests(ITestOutputHelper outputHelper) : base(outputHelper)
 		{
-			outputHelper.WriteLine("Trying to bind Google");
 			_googleConfiguration = BindConfiguration<GoogleCloudConfiguration>("GoogleCloudConfiguration");
-			outputHelper.WriteLine($"Google bucket: ${_googleConfiguration.BucketName}");
+			outputHelper.WriteLine($"Google bucket: {_googleConfiguration.BucketName}");
 		}
 
 		public override IStorageProvider CreateStorageProvider()

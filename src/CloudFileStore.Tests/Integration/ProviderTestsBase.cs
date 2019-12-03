@@ -6,11 +6,19 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CloudFileStore.Tests.Integration
 {
 	public abstract class ProviderTestsBase : IDisposable
 	{
+		protected readonly ITestOutputHelper _outputHelper;
+
+		public ProviderTestsBase(ITestOutputHelper outputHelper)
+		{
+			_outputHelper = outputHelper;
+		}
+		
 		public T BindConfiguration<T>(string sectionName) where T : new()
 		{
 			// Get configuration from user secrets:
@@ -163,12 +171,26 @@ namespace CloudFileStore.Tests.Integration
 		{
 			Task cleanupTask = Task.Run(async () =>
 			{
-				// Remove everything from the bucket once we're finished
-				var provider = CreateStorageProvider();
-				var files = await provider.ListFilesAsync(100, false);
-				foreach (string filename in files)
+				try
 				{
-					provider.DeleteFileAsync(filename).GetAwaiter().GetResult();
+					// Remove everything from the bucket once we're finished
+					var provider = CreateStorageProvider();
+					var files = await provider.ListFilesAsync(100, false);
+					foreach (string filename in files)
+					{
+						try
+						{
+							await provider.DeleteFileAsync(filename);
+						}
+						catch (Exception e)
+						{
+							_outputHelper.WriteLine($"Dispose: failed to delete {filename} - {e.Message}");
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					_outputHelper.WriteLine($"Dispose: failed to cleanup. {e.Message}");
 				}
 			});
 
