@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -13,10 +14,12 @@ namespace CloudFileStore.Tests.Integration
 	public abstract class ProviderTestsBase : IDisposable
 	{
 		protected readonly ITestOutputHelper _outputHelper;
+		private List<string> _filesCreated;
 
 		public ProviderTestsBase(ITestOutputHelper outputHelper)
 		{
 			_outputHelper = outputHelper;
+			_filesCreated =  new List<string>();
 		}
 		
 		public T BindConfiguration<T>(string sectionName) where T : new()
@@ -45,7 +48,12 @@ namespace CloudFileStore.Tests.Integration
 
 		private string GenerateFilename()
 		{
-			return DateTime.UtcNow.ToString("dd-MM-yyyy-HH-mm-ss") + $"{Environment.MachineName}.json";
+			string filename = DateTime.UtcNow.ToString("dd-MM-yyyy-HH-mm") +
+			                  $"-{Guid.NewGuid():N}.json";
+
+			_filesCreated.Add(filename);
+
+			return filename;
 		}
 
 		protected async Task CreateTestFile(string filename)
@@ -178,10 +186,9 @@ namespace CloudFileStore.Tests.Integration
 			{
 				try
 				{
-					// Remove everything from the bucket once we're finished
+					// Remove everything we created in the bucket once we're finished
 					var provider = CreateStorageProvider();
-					var files = await provider.ListFilesAsync(100, false);
-					foreach (string filename in files.Where(f => f.Contains(Environment.MachineName)))
+					foreach (string filename in _filesCreated)
 					{
 						try
 						{
