@@ -9,7 +9,7 @@ steps:
       - --keyring=github-builds
       - --key=default-key
 
-  - name: 'script-runner'
+  - name: ubuntu
     args: ['bash', 'mv',  '-f', 'glcoud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
 
   - name: mcr.microsoft.com/dotnet/core/sdk:3.0
