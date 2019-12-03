@@ -4,7 +4,7 @@ steps:
       - kms
       - decrypt
       - --ciphertext-file=googlecloud.appsettings.json.enc
-      - --plaintext-file=/artifacts/glcoud-appsettings.json
+      - --plaintext-file=glcoud-appsettings.json
       - --location=global
       - --keyring=github-builds
       - --key=default-key
