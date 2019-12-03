@@ -1,0 +1,8 @@
+steps:
+- name: microsoft/dotnet:sdk
+  entrypoint: dotnet
+  args: ['build']
+  
+- name: microsoft/dotnet:sdk
+  entrypoint: dotnet
+  args: ['test src/CloudFileStore.Tests']  
