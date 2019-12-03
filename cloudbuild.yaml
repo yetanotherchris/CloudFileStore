@@ -1,8 +1,21 @@
 steps:
-- name: mcr.microsoft.com/dotnet/core/sdk:3.0
-  entrypoint: dotnet
-  args: ['build']
-  
-- name: mcr.microsoft.com/dotnet/core/sdk:3.0
-  entrypoint: dotnet
-  args: ['test src/CloudFileStore.Tests']  
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - kms
+      - decrypt
+      - --ciphertext-file=googlecloud.appsettings.json.enc
+      - --plaintext-file=/artifacts/glcoud-appsettings.json
+      - --location=global
+      - --keyring=github-builds
+      - --key=default-key
+
+  - name: 'script-runner'
+    args: ['bash', 'mv',  '-f', 'glcoud-appsettings.json', './src/CloudFileStore.Tests/appsettings.json']
+
+  - name: mcr.microsoft.com/dotnet/core/sdk:3.0
+    entrypoint: dotnet
+    args: ['build']
+    
+  - name: mcr.microsoft.com/dotnet/core/sdk:3.0
+    entrypoint: dotnet
+    args: ['test src/CloudFileStore.Tests']  
