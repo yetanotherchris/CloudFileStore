@@ -181,7 +181,7 @@ namespace CloudFileStore.Tests.Integration
 					// Remove everything from the bucket once we're finished
 					var provider = CreateStorageProvider();
 					var files = await provider.ListFilesAsync(100, false);
-					foreach (string filename in files)
+					foreach (string filename in files.Where(f => f.Contains(Environment.MachineName)))
 					{
 						try
 						{
