@@ -17,6 +17,7 @@ namespace CloudFileStore.Tests.Integration
 
 		public GoogleCloudStorageProviderTests(ITestOutputHelper outputHelper)
 		{
+			outputHelper.WriteLine("Trying to bind Google");
 			_googleConfiguration = BindConfiguration<GoogleCloudConfiguration>("GoogleCloudConfiguration");
 			outputHelper.WriteLine($"Google bucket: ${_googleConfiguration.BucketName}");
 		}

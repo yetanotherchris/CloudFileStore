@@ -9,6 +9,7 @@ namespace CloudFileStore.Tests.Integration
 
 		public AzureBlogStorageProviderTests(ITestOutputHelper outputHelper)
 		{
+			outputHelper.WriteLine("Trying to bind Azure");
 			_azureBlobConfiguration = BindConfiguration<AzureBlobConfiguration>("AzureBlobConfiguration");
 			outputHelper.WriteLine($"Azure container: ${_azureBlobConfiguration.ContainerName}");
 		}

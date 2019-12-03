@@ -29,7 +29,7 @@ addons:
 before_install:
   - openssl aes-256-cbc -K $encrypted_f84939ba13f7_key -iv $encrypted_f84939ba13f7_iv
     -in travis-appsettings.config.enc -out travis-appsettings.config -d
- # - mv -f travis-appsettings.config src/CloudFileStore.Tests/appsettings.json
+  - mv -f travis-appsettings.config src/CloudFileStore.Tests/appsettings.json
 
 script:
   - root=$(pwd -P)

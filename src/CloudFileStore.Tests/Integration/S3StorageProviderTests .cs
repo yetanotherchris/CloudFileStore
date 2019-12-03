@@ -1,6 +1,4 @@
-using System.IO;
 using CloudFileStore.AWS;
-using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 
 namespace CloudFileStore.Tests.Integration
@@ -11,6 +9,7 @@ namespace CloudFileStore.Tests.Integration
 
 		public S3StorageProviderTests(ITestOutputHelper outputHelper)
 		{
+			outputHelper.WriteLine("Trying to bind S3");
 			_s3Configuration = BindConfiguration<S3Configuration>("S3Configuration");
 			outputHelper.WriteLine($"AWS bucket name: ${_s3Configuration.BucketName}");
 		}
