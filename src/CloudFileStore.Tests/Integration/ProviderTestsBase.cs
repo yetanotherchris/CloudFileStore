@@ -40,6 +40,12 @@ namespace CloudFileStore.Tests.Integration
 			IStorageProvider provider = CreateStorageProvider();
 			await provider.SaveTextFileAsync(filename, "content here");
 		}
+		
+		//[Fact]
+		public async Task test()
+		{
+			"test".ShouldBe("test");
+		}
 
 		//[Fact]
 		public async Task should_save_text_file_content()
