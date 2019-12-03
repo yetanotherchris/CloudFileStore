@@ -41,7 +41,7 @@ namespace CloudFileStore.Tests.Integration
 			await provider.SaveTextFileAsync(filename, "content here");
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task should_save_text_file_content()
 		{
 			// given
