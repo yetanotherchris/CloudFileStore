@@ -43,6 +43,11 @@ namespace CloudFileStore.Tests.Integration
 
 		public abstract IStorageProvider CreateStorageProvider();
 
+		private string GenerateFilename()
+		{
+			return DateTime.UtcNow.ToString("dd-MM-yyyy-HH-mm-ss") + $"{Environment.MachineName}.json";
+		}
+
 		protected async Task CreateTestFile(string filename)
 		{
 			IStorageProvider provider = CreateStorageProvider();
@@ -54,7 +59,7 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			IStorageProvider provider = CreateStorageProvider();
-			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			string filename = GenerateFilename();
 
 			// when
 			await provider.SaveTextFileAsync(filename, "content here");
@@ -69,7 +74,7 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			IStorageProvider provider = CreateStorageProvider();
-			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			string filename = GenerateFilename();
 			await CreateTestFile(filename);
 
 			// when
@@ -86,7 +91,7 @@ namespace CloudFileStore.Tests.Integration
 			IStorageProvider provider = CreateStorageProvider();
 			for (int i = 0; i < 10; i++)
 			{
-				string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+				string filename = GenerateFilename();
 				await CreateTestFile(filename);
 			}
 
@@ -108,7 +113,7 @@ namespace CloudFileStore.Tests.Integration
 			IStorageProvider provider = CreateStorageProvider();
 			for (int i = 0; i < 10; i++)
 			{
-				string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+				string filename = GenerateFilename();
 				await CreateTestFile(filename);
 			}
 
@@ -128,7 +133,7 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			IStorageProvider provider = CreateStorageProvider();
-			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			string filename = GenerateFilename();
 			await provider.SaveTextFileAsync(filename, "content here");
 
 			// when
@@ -156,7 +161,7 @@ namespace CloudFileStore.Tests.Integration
 		{
 			// given
 			IStorageProvider provider = CreateStorageProvider();
-			string filename = $"{DateTime.UtcNow.Ticks.ToString()}.json";
+			string filename = GenerateFilename();
 			await provider.SaveTextFileAsync(filename, "content here");
 
 			// when
