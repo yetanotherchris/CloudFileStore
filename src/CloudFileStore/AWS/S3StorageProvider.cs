@@ -17,20 +17,39 @@ namespace CloudFileStore.AWS
 
 		public S3StorageProvider(S3Configuration configuration)
 		{
+			if (string.IsNullOrEmpty(configuration.BucketName))
+				throw new ArgumentNullException("S3Configuration.BucketName", "Please provide a bucket name in the configuration");
+			
 			_configuration = configuration;
 
-			AWSCredentials credentials;
-            
-			if (!string.IsNullOrEmpty(configuration.Token))
+			if (!string.IsNullOrEmpty(configuration.AccessKey))
 			{
-				credentials = new SessionAWSCredentials(_configuration.AccessKey, _configuration.SecretKey, _configuration.Token);
+				AWSCredentials credentials;
+
+				if (!string.IsNullOrEmpty(configuration.Token))
+				{
+					credentials = new SessionAWSCredentials(_configuration.AccessKey, 
+															_configuration.SecretKey,
+															_configuration.Token);
+				}
+				else
+				{
+					credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
+				}
+
+				_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
 			}
 			else
 			{
-				credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
+				if (!string.IsNullOrEmpty(_configuration.Region))
+				{
+					_s3Client = new AmazonS3Client(_configuration.RegionEndpoint);
+				}
+				else
+				{
+					_s3Client = new AmazonS3Client();
+				}
 			}
-			
-			_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
 		}
 
 		public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)

@@ -8,16 +8,24 @@ namespace CloudFileStore.AWS
 	public class S3Configuration
 	{
 		public string BucketName { get; set; }
-		public string SecretKey { get; set; }
+		
+		/// <summary>
+		/// The user's access key for S3 authentication. Leave blank for ~/.aws/credentials based authentication.
+		/// </summary>
 		public string AccessKey { get; set; }
 		
 		/// <summary>
-		/// An optional token, if using AWS Session authentication.
+		/// The user's secret key for S3 authentication. Leave blank for ~/.aws/credentials based authentication.
+		/// </summary>
+		public string SecretKey { get; set; }
+		
+		/// <summary>
+		/// The users' optional session token, if using AWS Session authentication.
 		/// </summary>
 		public string Token { get;set; }
 		
 		/// <summary>
-		/// For example eu-west-1
+		/// The AWS region, for example eu-west-1. Leave blank to use the ~/.aws/ config value.
 		/// </summary>
 		public string Region { get; set; }
 
