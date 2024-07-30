@@ -13,7 +13,7 @@ The most long winded of the 3...
 1. Under IAM, click on "service accounts" on the left side.
 1. Create a new service account, Storage Admin.
 1. Download the JSON file.
-1. Paste the JSON parts into appsettings.json under `"GoogleCloudConfiguration": {`
+1. Paste the JSON parts into appsettings.json under `"GoogleCloudConfiguration": {`, being careful not to delete the BucketName key.
 1. Under "Storage" in the left menu, go to "Browser"
 1. Create a bucket
 1. Copy the bucket name into appsettings.json e.g. `"BucketName": "cloudfilestore-tests",`
@@ -22,11 +22,10 @@ The most long winded of the 3...
 ### Azure
 
 1. Create a storage account with the defaults.
-1. Once it's finished, navigate there and then click the "Access Keys" link.
+1. Once it's finished, navigate there and then click the "Security+Networking->Access Keys" link.
 1. Copy the first connection string into appsettings.json.
-1. In the Azure portal go to "Overview".
-1. Click on "Containers".
-1. Click on the "+" icon to create a container and call it "tests.
+1. Click "Data Storage->Containers" on the left
+1. Click on the "+ Container" icon to create a container and call it "tests".
 1. Copy the container name "tests" into the Azure appsettings.json section.
 
 ### AWS
