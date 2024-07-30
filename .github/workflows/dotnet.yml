@@ -29,7 +29,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name Write appsettings for tests
+    - name: Write appsettings for tests
       run: |
         sed "s|//GOOGLE_CONFIGURATION|${{ secrets.GOOGLE_CONFIGURATION }}|" src/CloudFileStore.Tests/appsettings.gha-template.json > src/CloudFileStore.Tests/appsettings.temp.json
         sed -i "s|{AWS_BUCKETNAME}|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.temp.json
