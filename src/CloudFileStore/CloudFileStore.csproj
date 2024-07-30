@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Authors>C.Small</Authors>
 		<Description>A multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs) for C#</Description>
 		<RepositoryUrl>https://github.com/yetanotherchris/CloudFileStore</RepositoryUrl>
@@ -11,9 +11,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Google.Cloud.Storage.V1" Version="2.3.0" />
-		<PackageReference Include="AWSSDK.S3" Version="3.3.108.5" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
+		<PackageReference Include="AWSSDK.S3" Version="3.7.400.2" />
 		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
 	</ItemGroup>
 </Project>
