@@ -1,0 +1,12 @@
+﻿{
+  "type": "service_account",
+  "project_id": "Copy the values from your Google Cloud JSON file",
+  "private_key_id": "<PASTE YOUR VALUE HERE>",
+  "private_key": "<PASTE YOUR VALUE HERE>",
+  "client_email": "<PASTE YOUR VALUE HERE>",
+  "client_id": "<PASTE YOUR VALUE HERE>",
+  "auth_uri": "<PASTE YOUR VALUE HERE>",
+  "token_uri": "<PASTE YOUR VALUE HERE>",
+  "auth_provider_x509_cert_url": "<PASTE YOUR VALUE HERE>",
+  "client_x509_cert_url": "<PASTE YOUR VALUE HERE>"
+}
