@@ -17,6 +17,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Write appsettings from secrets for tests
+      run: |
+        echo "${{ secrets.GOOGLE_CONFIGURATION }}" > src/CloudFileStore.Tests/google.json
+        sed -i "s|AWS_BUCKETNAME|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
+        sed -i "s|AWS_SECRETKEY|${{ secrets.AWS_SECRETKEY }}|" src/CloudFileStore.Tests/appsettings.json
+        sed -i "s|AWS_ACCESSKEY|${{ secrets.AWS_ACCESSKEY }}|" src/CloudFileStore.Tests/appsettings.json
+        sed -i "s|AZURE_CONTAINERNAME|${{ secrets.AZURE_CONTAINERNAME }}|" src/CloudFileStore.Tests/appsettings.json
+        sed -i "s|AZURE_CONNECTIONSTRING|${{ secrets.AZURE_CONNECTIONSTRING }}|" src/CloudFileStore.Tests/appsettings.json
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -28,15 +37,6 @@ jobs:
       
     - name: Build
       run: dotnet build --no-restore
-
-    - name: Write appsettings from secrets for tests
-      run: |
-        echo "${{ secrets.GOOGLE_CONFIGURATION }}" > src/CloudFileStore.Tests/google.json
-        sed -i "s|AWS_BUCKETNAME|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AWS_SECRETKEY|${{ secrets.AWS_SECRETKEY }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AWS_ACCESSKEY|${{ secrets.AWS_ACCESSKEY }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AZURE_CONTAINERNAME|${{ secrets.AZURE_CONTAINERNAME }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AZURE_CONNECTIONSTRING|${{ secrets.AZURE_CONNECTIONSTRING }}|" src/CloudFileStore.Tests/appsettings.json
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
