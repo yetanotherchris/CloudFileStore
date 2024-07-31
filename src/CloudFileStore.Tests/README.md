@@ -1,9 +1,6 @@
 ﻿# Integration tests
 
-These tests rely on appsettings.json containing valid credentials. For Travis, the appsettings.json files
- are encrypted in the root directory as "travis-appsettings.config.enc" (see Travis below).
-  
-
+These tests rely on appsettings.json containing valid credentials.
 
 ### Google
 
@@ -18,6 +15,8 @@ The most long winded of the 3...
 1. Create a bucket
 1. Copy the bucket name into appsettings.json e.g. `"BucketName": "cloudfilestore-tests",`
 1. Select the bucket in the browser, and under permissions on the right add the service account email as role "Storage Admin".
+
+You can also store the JSON file that you downloaded from the Google console as `google.json`, which is used by the Github Actions workflow.
 
 ### Azure
 
@@ -52,29 +51,3 @@ The most long winded of the 3...
 ```
 
 Then generate an access/secret key for the user, add to appsettings.json
-
-### Google Cloud builds
-
-Follow these instructions to generate the `googlecloud.appsettings.json` file:
-https://cloud.google.com/cloud-build/docs/securing-builds/use-encrypted-secrets-credentials
-
-### Travis
-
-Once the tests appsettings.json file is complete, update the `travis-appsettings.config.enc` file in the root 
-directory with the following:
-
-Run the following on Linux (The Travis gem doesn't work on Windows, install Ubuntu via Windows Store).
-
-```
-sudo apt update
-sudo apt install build-essential
-sudo apt install ruby-full
-sudo gem install travis
-
-cd /mnt/c/Users/(full path here)
-travis login --org
-travis encrypt-file appsettings.config
-```
-
-Follow the onscreen instructions, and copy appsettings.json.enc into the root and rename it `travis-appsettings.config.enc`
-Finally, reset/revert `appsettings.json` in Git.
