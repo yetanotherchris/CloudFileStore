@@ -1,9 +1,9 @@
-[![NuGet](https://img.shields.io/nuget/v/CloudFileStore.svg)](https://www.nuget.org/packages/CloudFileStore/)
-
-<img src="https://github.com/yetanotherchris/CloudFileStore/raw/master/icon.png" style="width:10%;height:10%" />
+![logo](https://github.com/yetanotherchris/CloudFileStore/raw/master/icon.png)
 
 # CloudFileStore
 A .NET Standard multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs).
+
+[![NuGet](https://img.shields.io/nuget/v/CloudFileStore.svg)](https://www.nuget.org/packages/CloudFileStore/)  
 
 ## About
 
