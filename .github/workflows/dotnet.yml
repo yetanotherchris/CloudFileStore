@@ -53,4 +53,4 @@ jobs:
 
     - name: Publish the package to Nuget
       if: github.event_name != 'pull_request' && github.actor == github.repository_owner
-      run: dotnet nuget push src/CloudFileStore/bin/Release/8.0.${{ github.run_number }}.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json 
+      run: dotnet nuget push src/CloudFileStore/bin/Release/CloudFileStore.8.0.${{ github.run_number }}.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json 
