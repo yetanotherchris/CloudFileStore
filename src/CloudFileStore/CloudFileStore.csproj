@@ -6,8 +6,8 @@
 		<Description>A multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs) for C#</Description>
 		<RepositoryUrl>https://github.com/yetanotherchris/CloudFileStore</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/yetanotherchris/CloudFileStore</PackageProjectUrl>
-		<license>MIT</license>
-		<icon>icon.png</icon>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
