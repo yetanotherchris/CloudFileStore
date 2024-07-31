@@ -18,9 +18,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Write key file
+      env:
+        MYSECRET: ${{ secrets.GOOGLE_CONFIGURATION }}
+      run: |
+        echo "$MYSECRET" | base64 --decode > ${HOME}/google.json
+
     - name: Write appsettings from secrets for tests
       run: |
-        echo "${{ secrets.GOOGLE_CONFIGURATION }}" > src/CloudFileStore.Tests/google.json
+        mv ${HOME}/google.json src/CloudFileStore.Tests/google.json
         sed -i "s|GOOGLE_BUCKETNAME|${{ secrets.GOOGLE_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
         sed -i "s|AWS_BUCKETNAME|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
         sed -i "s|AWS_SECRETKEY|${{ secrets.AWS_SECRETKEY }}|" src/CloudFileStore.Tests/appsettings.json
