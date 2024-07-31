@@ -1,7 +1,7 @@
 ![logo](https://raw.githubusercontent.com/yetanotherchris/CloudFileStore/master/icon.png)
 
 # CloudFileStore
-A .NET Standard multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs).
+A .NET (Core) multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs).
 
 [![NuGet](https://img.shields.io/nuget/v/CloudFileStore.svg)](https://www.nuget.org/packages/CloudFileStore/)  
 
