@@ -21,6 +21,7 @@ jobs:
     - name: Write appsettings from secrets for tests
       run: |
         echo "${{ secrets.GOOGLE_CONFIGURATION }}" > src/CloudFileStore.Tests/google.json
+        sed -i "s|GOOGLE_BUCKETNAME|${{ secrets.GOOGLE_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
         sed -i "s|AWS_BUCKETNAME|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
         sed -i "s|AWS_SECRETKEY|${{ secrets.AWS_SECRETKEY }}|" src/CloudFileStore.Tests/appsettings.json
         sed -i "s|AWS_ACCESSKEY|${{ secrets.AWS_ACCESSKEY }}|" src/CloudFileStore.Tests/appsettings.json
