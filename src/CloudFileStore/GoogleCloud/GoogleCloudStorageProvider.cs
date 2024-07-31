@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Google.Api.Gax;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
-using Newtonsoft.Json;
 using Object = Google.Apis.Storage.v1.Data.Object;
 
 namespace CloudFileStore.GoogleCloud
@@ -21,7 +21,7 @@ namespace CloudFileStore.GoogleCloud
 		{
 			_configuration = configuration;
 
-			string json = JsonConvert.SerializeObject(_configuration);
+			string json = JsonSerializer.Serialize(_configuration);
 			GoogleCredential credential = GoogleCredential.FromJson(json);
 
 			_storageClient = StorageClient.Create(credential);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Amazon;
-using Newtonsoft.Json;
 
 namespace CloudFileStore.AWS
 {

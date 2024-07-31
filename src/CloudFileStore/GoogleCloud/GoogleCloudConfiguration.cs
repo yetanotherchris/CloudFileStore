@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace CloudFileStore.GoogleCloud
 {
@@ -6,7 +6,7 @@ namespace CloudFileStore.GoogleCloud
 	{
 		public string BucketName { get; set; }
 
-		[JsonProperty("type")]
+		[JsonPropertyName("type")]
 		public string Type { get; set; }
 
 #pragma warning disable IDE1006 // Naming Styles
