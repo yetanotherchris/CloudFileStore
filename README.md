@@ -1,4 +1,4 @@
-![logo](https://github.com/yetanotherchris/CloudFileStore/raw/master/icon.png)
+![logo](https://raw.githubusercontent.com/yetanotherchris/CloudFileStore/master/icon.png)
 
 # CloudFileStore
 A .NET Standard multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs).
