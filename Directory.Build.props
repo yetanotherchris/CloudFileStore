@@ -1,0 +1,15 @@
+<Project>
+	<PropertyGroup>
+		<!-- Common target framework -->
+		<TargetFramework>net9.0</TargetFramework>
+
+		<!-- Package metadata -->
+		<Authors>C.Small</Authors>
+		<RepositoryUrl>https://github.com/yetanotherchris/CloudFileStore</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/yetanotherchris/CloudFileStore</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+		<!-- Repository root for relative paths -->
+		<RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+	</PropertyGroup>
+</Project>
