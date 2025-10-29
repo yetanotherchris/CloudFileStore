@@ -8,6 +8,10 @@ on:
         required: false
         type: string
         default: '9.0.x'
+    secrets:
+      GOOGLE_AUTH_JSON:
+        description: 'Google Cloud service account JSON'
+        required: true
   workflow_dispatch:
     inputs:
       dotnet-version:
