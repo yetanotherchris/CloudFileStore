@@ -37,7 +37,20 @@ namespace CloudFileStore.AWS
 					credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
 				}
 
-				_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
+				// Check if using LocalStack or other S3-compatible service
+				if (!string.IsNullOrEmpty(_configuration.ServiceUrl))
+				{
+					var config = new AmazonS3Config
+					{
+						ServiceURL = _configuration.ServiceUrl,
+						ForcePathStyle = true
+					};
+					_s3Client = new AmazonS3Client(credentials, config);
+				}
+				else
+				{
+					_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
+				}
 			}
 			else
 			{

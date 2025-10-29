@@ -29,6 +29,11 @@ namespace CloudFileStore.AWS
 		/// </summary>
 		public string Region { get; set; }
 
+		/// <summary>
+		/// Optional service URL for S3-compatible services like LocalStack. For example: http://localhost:4566
+		/// </summary>
+		public string ServiceUrl { get; set; }
+
 		[JsonIgnore]
 		public RegionEndpoint RegionEndpoint
 		{
