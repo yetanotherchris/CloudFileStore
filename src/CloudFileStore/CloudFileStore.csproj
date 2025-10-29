@@ -1,30 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Authors>C.Small</Authors>
 		<Description>A multi-cloud file storage library (S3, Google Cloud buckets, Azure blobs) for C#</Description>
-		<RepositoryUrl>https://github.com/yetanotherchris/CloudFileStore</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/yetanotherchris/CloudFileStore</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\..\icon.png">
+	  <None Include="$(RepositoryRoot)icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="..\..\README.md">
+	  <None Include="$(RepositoryRoot)README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-		<PackageReference Include="AWSSDK.S3" Version="3.7.400.2" />
-		<PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+		<PackageReference Include="Google.Cloud.Storage.V1" />
+		<PackageReference Include="AWSSDK.S3" />
+		<PackageReference Include="WindowsAzure.Storage" />
 	</ItemGroup>
 </Project>
