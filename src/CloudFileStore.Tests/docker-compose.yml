@@ -1,0 +1,77 @@
+services:
+  # AWS S3 Emulator (LocalStack)
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=s3
+      - DEBUG=0
+      - PERSISTENCE=1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./test-data/localstack:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Azure Blob Storage Emulator (Azurite)
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000"  # Blob service
+      - "10001:10001"  # Queue service
+      - "10002:10002"  # Table service
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose"
+    volumes:
+      - ./test-data/azurite:/data
+
+  # Initialize buckets/containers
+  init:
+    image: amazon/aws-cli:latest
+    depends_on:
+      - localstack
+      - azurite
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        echo "Waiting for services to start..."
+        sleep 10
+
+        echo "Initializing cloud storage emulators..."
+
+        # Create S3 bucket in LocalStack (with retries)
+        echo "Creating S3 bucket..."
+        for i in 1 2 3 4 5; do
+          aws --endpoint-url=http://localstack:4566 s3 mb s3://test-bucket && break || sleep 5
+        done
+
+        # Create Azure container (with retries)
+        echo "Creating Azure container..."
+        for i in 1 2 3 4 5; do
+          response=$(curl -s -w "\n%{http_code}" -X PUT \
+            "http://azurite:10000/devstoreaccount1/test-container?restype=container" \
+            -H "x-ms-date: $(date -u +"%a, %d %b %Y %H:%M:%S GMT")" \
+            -H "x-ms-version: 2021-08-06" \
+            -H "Authorization: SharedKey devstoreaccount1:Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==")
+          status_code=$(echo "$response" | tail -n 1)
+          if [ "$status_code" = "201" ] || [ "$status_code" = "409" ]; then
+            echo "Azure container ready (status: $status_code)"
+            break
+          fi
+          echo "Retrying Azure container creation... ($i/5, status: $status_code)"
+          sleep 5
+        done
+
+        echo "Initialization complete!"
+    restart: "no"
+
+volumes:
+  localstack-data:
+  azurite-data:

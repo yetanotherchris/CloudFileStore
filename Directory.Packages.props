@@ -1,0 +1,26 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Cloud Provider SDKs -->
+		<PackageVersion Include="AWSSDK.S3" Version="4.0.8" />
+		<PackageVersion Include="Google.Cloud.Storage.V1" Version="4.13.0" />
+		<PackageVersion Include="WindowsAzure.Storage" Version="9.3.3" />
+
+		<!-- Microsoft Extensions (Configuration) -->
+		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
+
+		<!-- Testing Framework -->
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+		<PackageVersion Include="Shouldly" Version="4.3.0" />
+		<PackageVersion Include="xunit" Version="2.9.3" />
+		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+	</ItemGroup>
+</Project>

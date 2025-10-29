@@ -11,7 +11,7 @@ CloudFileStore is a .NET Core library to try to unify or speed up file managemen
 
 It's not intended to cover every scenario each SDK offers, for example it won't give you metadata. It also bundles every file storage SDK of every cloud provider - it's designed this way (for now at least) on purpose, for applications that need multi-cloud file operations. So in terms of extra DLLs and file size, it's fairly hefty.
 
-Two projects that currently use it are [Letmein](https://github.com/yetanotherchris/letmein) and [Roadkill](https://github.com/roadkillwiki/roadkill).
+A project that currently uses it is [Letmein](https://github.com/yetanotherchris/letmein).
 
 ## Usage
 

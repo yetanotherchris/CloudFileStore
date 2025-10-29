@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet list CloudFileStore.sln package --outdated)",
+      "WebSearch",
+      "Bash(dotnet --version:*)",
+      "Bash(dotnet test:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(timeout 60 docker-compose logs:*)",
+      "Bash(docker ps:*)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker logs cloudfilestoretests-azurite-1)",
+      "Bash(docker run:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(powershell -Command \"$env:STORAGE_EMULATOR_HOST=''http://localhost:4443''; dotnet test\")",
+      "Bash(cmd /c \"set STORAGE_EMULATOR_HOST=http://localhost:4443 && dotnet test\")",
+      "Bash(dotnet format:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

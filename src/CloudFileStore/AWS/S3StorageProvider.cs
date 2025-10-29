@@ -9,134 +9,147 @@ using Amazon.S3.Model;
 
 namespace CloudFileStore.AWS
 {
-	public class S3StorageProvider : IStorageProvider
-	{
-		private readonly S3Configuration _configuration;
-		private readonly AmazonS3Client _s3Client;
-		private string _continuationToken;
+    public class S3StorageProvider : IStorageProvider
+    {
+        private readonly S3Configuration _configuration;
+        private readonly AmazonS3Client _s3Client;
+        private string _continuationToken;
 
-		public S3StorageProvider(S3Configuration configuration)
-		{
-			if (string.IsNullOrEmpty(configuration.BucketName))
-				throw new ArgumentNullException("S3Configuration.BucketName", "Please provide a bucket name in the configuration");
-			
-			_configuration = configuration;
+        public S3StorageProvider(S3Configuration configuration)
+        {
+            if (string.IsNullOrEmpty(configuration.BucketName))
+                throw new ArgumentNullException("S3Configuration.BucketName", "Please provide a bucket name in the configuration");
 
-			if (!string.IsNullOrEmpty(configuration.AccessKey))
-			{
-				AWSCredentials credentials;
+            _configuration = configuration;
 
-				if (!string.IsNullOrEmpty(configuration.Token))
-				{
-					credentials = new SessionAWSCredentials(_configuration.AccessKey, 
-															_configuration.SecretKey,
-															_configuration.Token);
-				}
-				else
-				{
-					credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
-				}
+            if (!string.IsNullOrEmpty(configuration.AccessKey))
+            {
+                AWSCredentials credentials;
 
-				_s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
-			}
-			else
-			{
-				if (!string.IsNullOrEmpty(_configuration.Region))
-				{
-					_s3Client = new AmazonS3Client(_configuration.RegionEndpoint);
-				}
-				else
-				{
-					_s3Client = new AmazonS3Client();
-				}
-			}
-		}
+                if (!string.IsNullOrEmpty(configuration.Token))
+                {
+                    credentials = new SessionAWSCredentials(_configuration.AccessKey,
+                                                            _configuration.SecretKey,
+                                                            _configuration.Token);
+                }
+                else
+                {
+                    credentials = new BasicAWSCredentials(_configuration.AccessKey, _configuration.SecretKey);
+                }
 
-		public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)
-		{
-			var request = new ListObjectsV2Request()
-			{
-				MaxKeys = pageSize,
-				BucketName = _configuration.BucketName,
-			};
+                // Check if using LocalStack or other S3-compatible service
+                if (!string.IsNullOrEmpty(_configuration.ServiceUrl))
+                {
+                    var config = new AmazonS3Config
+                    {
+                        ServiceURL = _configuration.ServiceUrl,
+                        ForcePathStyle = true
+                    };
+                    _s3Client = new AmazonS3Client(credentials, config);
+                }
+                else
+                {
+                    _s3Client = new AmazonS3Client(credentials, _configuration.RegionEndpoint);
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_configuration.Region))
+                {
+                    _s3Client = new AmazonS3Client(_configuration.RegionEndpoint);
+                }
+                else
+                {
+                    _s3Client = new AmazonS3Client();
+                }
+            }
+        }
 
-			if (pagingEnabled)
-				request.ContinuationToken = _continuationToken;
+        public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)
+        {
+            var request = new ListObjectsV2Request()
+            {
+                MaxKeys = pageSize,
+                BucketName = _configuration.BucketName,
+            };
 
-			ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request);
-			_continuationToken = response.NextContinuationToken;
+            if (pagingEnabled)
+                request.ContinuationToken = _continuationToken;
 
-			return response.S3Objects.Select(x => x.Key);
-		}
+            ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request);
+            _continuationToken = response.NextContinuationToken;
 
-		public async Task<string> LoadTextFileAsync(string filename)
-		{
-			var request = new GetObjectRequest
-			{
-				BucketName = _configuration.BucketName,
-				Key = filename
-			};
-			GetObjectResponse response = await _s3Client.GetObjectAsync(request);
+            return response.S3Objects.Select(x => x.Key);
+        }
 
-			if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
-				return null;
+        public async Task<string> LoadTextFileAsync(string filename)
+        {
+            var request = new GetObjectRequest
+            {
+                BucketName = _configuration.BucketName,
+                Key = filename
+            };
+            GetObjectResponse response = await _s3Client.GetObjectAsync(request);
 
-			using (var reader = new StreamReader(response.ResponseStream))
-			{
-				return await reader.ReadToEndAsync();
-			}
-		}
+            if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                return null;
 
-		public async Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain")
-		{
-			// S3Client handles the disposing of the Stream
-			Stream stream = new MemoryStream();
-			var streamWriter = new StreamWriter(stream);
-			await streamWriter.WriteAsync(fileContent);
-			streamWriter.Flush();
+            using (var reader = new StreamReader(response.ResponseStream))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
 
-			var putRequest = new PutObjectRequest()
-			{
-				BucketName = _configuration.BucketName,
-				ContentType = "text/plain",
-				InputStream = stream,
-				Key = filePath
-			};
+        public async Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain")
+        {
+            // S3Client handles the disposing of the Stream
+            Stream stream = new MemoryStream();
+            var streamWriter = new StreamWriter(stream);
+            await streamWriter.WriteAsync(fileContent);
+            streamWriter.Flush();
 
-			await _s3Client.PutObjectAsync(putRequest);
-		}
+            var putRequest = new PutObjectRequest()
+            {
+                BucketName = _configuration.BucketName,
+                ContentType = "text/plain",
+                InputStream = stream,
+                Key = filePath
+            };
 
-		public async Task DeleteFileAsync(string filename)
-		{
-			var request = new DeleteObjectRequest()
-			{
-				BucketName = _configuration.BucketName,
-				Key = filename
-			};
+            await _s3Client.PutObjectAsync(putRequest);
+        }
 
-			await _s3Client.DeleteObjectAsync(request);
-		}
+        public async Task DeleteFileAsync(string filename)
+        {
+            var request = new DeleteObjectRequest()
+            {
+                BucketName = _configuration.BucketName,
+                Key = filename
+            };
 
-		public async Task<bool> FileExistsAsync(string filename)
-		{
-			var request = new GetObjectRequest
-			{
-				BucketName = _configuration.BucketName,
-				Key = filename
-			};
+            await _s3Client.DeleteObjectAsync(request);
+        }
 
-			try
-			{
-				GetObjectResponse response = await _s3Client.GetObjectAsync(request);
+        public async Task<bool> FileExistsAsync(string filename)
+        {
+            var request = new GetObjectRequest
+            {
+                BucketName = _configuration.BucketName,
+                Key = filename
+            };
 
-				if (response != null || response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-					return true;
-			}
-			catch (Exception)
-			{
-			}
+            try
+            {
+                GetObjectResponse response = await _s3Client.GetObjectAsync(request);
 
-			return false;
-		}
-	}
+                if (response != null || response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                    return true;
+            }
+            catch (Exception)
+            {
+            }
+
+            return false;
+        }
+    }
 }
