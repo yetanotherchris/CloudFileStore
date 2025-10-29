@@ -48,7 +48,7 @@ jobs:
 
     - name: Start LocalStack and Azurite services
       working-directory: src/CloudFileStore.Tests
-      run: docker-compose up -d
+      run: docker compose up -d
 
     - name: Wait for services to be ready
       run: |
@@ -71,11 +71,11 @@ jobs:
       working-directory: src/CloudFileStore.Tests
       run: |
         echo "=== LocalStack Logs ==="
-        docker-compose logs localstack
+        docker compose logs localstack
         echo "=== Azurite Logs ==="
-        docker-compose logs azurite
+        docker compose logs azurite
         echo "=== Init Logs ==="
-        docker-compose logs init
+        docker compose logs init
         echo "=== Fake GCS Server Logs ==="
         docker logs fake-gcs-server
 
@@ -87,4 +87,4 @@ jobs:
       if: always()
       working-directory: src/CloudFileStore.Tests
       run: |
-        docker-compose down -v
+        docker compose down -v
