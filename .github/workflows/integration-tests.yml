@@ -1,0 +1,90 @@
+name: Integration Tests
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: '.NET version to use'
+        required: false
+        type: string
+        default: '9.0.x'
+  workflow_dispatch:
+    inputs:
+      dotnet-version:
+        description: '.NET version to use'
+        required: false
+        type: string
+        default: '9.0.x'
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Google JSON auth key.
+    #
+    # Add a new key via https://console.cloud.google.com/iam-admin/serviceaccounts/
+    # (you can't retrieve an existing one, it's downloaded one-time)
+    #
+    - name: Write Google JSON auth to file
+      env:
+        SECRET_JSON: ${{ secrets.GOOGLE_AUTH_JSON }}
+      run: |
+        echo "$SECRET_JSON" | base64 --decode > ${HOME}/google.json
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Start LocalStack and Azurite services
+      working-directory: src/CloudFileStore.Tests
+      run: docker-compose up -d
+
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for services to start..."
+        sleep 15
+
+        echo "Checking service health..."
+        docker ps
+
+        # Wait for LocalStack to be ready
+        timeout 30 bash -c 'until curl -s http://localhost:4566/_health | grep -q "\"s3\":\"running\""; do sleep 1; done' || echo "LocalStack health check timeout"
+
+        # Verify Azurite is responding
+        timeout 10 bash -c 'until curl -s http://localhost:10000/devstoreaccount1?comp=list; do sleep 1; done' || echo "Azurite connection check timeout"
+
+        echo "Services are ready!"
+
+    - name: Display docker logs
+      if: always()
+      working-directory: src/CloudFileStore.Tests
+      run: |
+        echo "=== LocalStack Logs ==="
+        docker-compose logs localstack
+        echo "=== Azurite Logs ==="
+        docker-compose logs azurite
+        echo "=== Init Logs ==="
+        docker-compose logs init
+        echo "=== Fake GCS Server Logs ==="
+        docker logs fake-gcs-server
+
+    - name: Run integration tests
+      working-directory: src/CloudFileStore.Tests
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Cleanup containers
+      if: always()
+      working-directory: src/CloudFileStore.Tests
+      run: |
+        docker-compose down -v

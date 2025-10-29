@@ -13,44 +13,56 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION_NUMBER: "9.0"
+      NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Write key file
-      env:
-        MYSECRET: ${{ secrets.GOOGLE_CONFIGURATION }}
-      run: |
-        echo "$MYSECRET" | base64 --decode > ${HOME}/google.json
-
-    - name: Write appsettings from secrets for tests
-      run: |
-        mv ${HOME}/google.json src/CloudFileStore.Tests/google.json
-        sed -i "s|GOOGLE_BUCKETNAME|${{ secrets.GOOGLE_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AWS_BUCKETNAME|${{ secrets.AWS_BUCKETNAME }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AWS_SECRETKEY|${{ secrets.AWS_SECRETKEY }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AWS_ACCESSKEY|${{ secrets.AWS_ACCESSKEY }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AZURE_CONTAINERNAME|${{ secrets.AZURE_CONTAINERNAME }}|" src/CloudFileStore.Tests/appsettings.json
-        sed -i "s|AZURE_CONNECTIONSTRING|${{ secrets.AZURE_CONNECTIONSTRING }}|" src/CloudFileStore.Tests/appsettings.json
-    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Restore dependencies
       run: dotnet restore
-      
+
     - name: Build
       run: dotnet build --no-restore
-      
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
 
-    - name: Create the package
-      run: dotnet pack --configuration Release /p:PackageVersion=8.0.${{ github.run_number }}
+  integration-tests:
+    needs: build
+    uses: ./.github/workflows/integration-tests.yml
+    with:
+      dotnet-version: '9.0.x'
+
+  publish:
+    needs: integration-tests
+    runs-on: ubuntu-latest
+    env:
+      VERSION_NUMBER: "9.0"
+      NUGET_KEY: ${{ secrets.NUGET_KEY }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build for release
+      run: dotnet build --no-restore -c Release
 
     - name: Publish the package to Nuget
       if: github.event_name != 'pull_request' && github.actor == github.repository_owner
-      run: dotnet nuget push src/CloudFileStore/bin/Release/CloudFileStore.8.0.${{ github.run_number }}.nupkg --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json 
+      run: |
+        export PACKAGE_VERSION="$VERSION_NUMBER.$GITHUB_RUN_NUMBER"
+        dotnet pack -c Release /p:PackageVersion=$PACKAGE_VERSION
+        dotnet nuget push src/CloudFileStore/bin/Release/CloudFileStore.$PACKAGE_VERSION.nupkg --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json 
