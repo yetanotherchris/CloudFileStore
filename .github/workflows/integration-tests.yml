@@ -76,8 +76,6 @@ jobs:
         docker compose logs azurite
         echo "=== Init Logs ==="
         docker compose logs init
-        echo "=== Fake GCS Server Logs ==="
-        docker logs fake-gcs-server
 
     - name: Run integration tests
       working-directory: src/CloudFileStore.Tests
