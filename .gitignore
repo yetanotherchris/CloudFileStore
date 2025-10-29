@@ -331,4 +331,6 @@ ASALocalRun/
 
 .vscode/
 
-travis-appsettings.config
+
+src/CloudFileStore.Tests/test-data/
+src/CloudFileStore.Tests/google.json
