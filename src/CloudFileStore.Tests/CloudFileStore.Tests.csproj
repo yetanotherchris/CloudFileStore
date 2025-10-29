@@ -7,10 +7,14 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="google.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="google.json" Condition="Exists('google.json')">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

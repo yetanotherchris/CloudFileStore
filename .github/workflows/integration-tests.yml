@@ -33,7 +33,7 @@ jobs:
       env:
         SECRET_JSON: ${{ secrets.GOOGLE_AUTH_JSON }}
       run: |
-        echo "$SECRET_JSON" | base64 --decode > ${HOME}/google.json
+        echo "$SECRET_JSON" > src/CloudFileStore.Tests/google.json
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
