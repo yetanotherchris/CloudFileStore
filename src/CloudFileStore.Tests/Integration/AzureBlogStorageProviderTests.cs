@@ -1,6 +1,6 @@
+using Azure.Storage.Blobs;
 using CloudFileStore.Azure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
 using Xunit.Abstractions;
 
 namespace CloudFileStore.Tests.Integration
@@ -17,7 +17,6 @@ namespace CloudFileStore.Tests.Integration
             IConfigurationSection section = configuration.GetSection("AzureBlobConfiguration");
             section.Bind(_azureBlobConfiguration);
 
-            // Ensure test Azure container exists for tests 
             EnsureAzureContainerExists();
 
             outputHelper.WriteLine($"Azure container: {_azureBlobConfiguration.ContainerName}");
@@ -25,11 +24,8 @@ namespace CloudFileStore.Tests.Integration
 
         private void EnsureAzureContainerExists()
         {
-            CloudStorageAccount storageAccount;
-            CloudStorageAccount.TryParse(_azureBlobConfiguration.ConnectionString, out storageAccount);
-
-            var client = storageAccount.CreateCloudBlobClient();
-            var container = client.GetContainerReference(_azureBlobConfiguration.ContainerName);
+            var blobServiceClient = new BlobServiceClient(_azureBlobConfiguration.ConnectionString);
+            var container = blobServiceClient.GetBlobContainerClient(_azureBlobConfiguration.ContainerName);
             container.CreateIfNotExistsAsync().GetAwaiter().GetResult();
         }
 

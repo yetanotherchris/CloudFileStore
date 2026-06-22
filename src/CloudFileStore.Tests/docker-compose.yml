@@ -1,20 +1,11 @@
 services:
-  # AWS S3 Emulator (LocalStack)
-  localstack:
-    image: localstack/localstack:latest
+  # AWS S3 Emulator (moto)
+  moto:
+    image: motoserver/moto:latest
     ports:
-      - "4566:4566"
-      - "4510-4559:4510-4559"
+      - "4566:5000"
     environment:
-      - SERVICES=s3
-      - DEBUG=0
-      - PERSISTENCE=1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_DEFAULT_REGION=us-east-1
-    volumes:
-      - ./test-data/localstack:/var/lib/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
+      - MOTO_PORT=5000
 
   # Azure Blob Storage Emulator (Azurite)
   azurite:
@@ -23,7 +14,7 @@ services:
       - "10000:10000"  # Blob service
       - "10001:10001"  # Queue service
       - "10002:10002"  # Table service
-    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose"
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck"
     volumes:
       - ./test-data/azurite:/data
 
@@ -31,7 +22,7 @@ services:
   init:
     image: amazon/aws-cli:latest
     depends_on:
-      - localstack
+      - moto
       - azurite
     environment:
       - AWS_ACCESS_KEY_ID=test
@@ -46,10 +37,10 @@ services:
 
         echo "Initializing cloud storage emulators..."
 
-        # Create S3 bucket in LocalStack (with retries)
+        # Create S3 bucket in moto (with retries)
         echo "Creating S3 bucket..."
         for i in 1 2 3 4 5; do
-          aws --endpoint-url=http://localstack:4566 s3 mb s3://test-bucket && break || sleep 5
+          aws --endpoint-url=http://moto:5000 s3 mb s3://test-bucket && break || sleep 5
         done
 
         # Create Azure container (with retries)
@@ -73,5 +64,5 @@ services:
     restart: "no"
 
 volumes:
-  localstack-data:
+  moto-data:
   azurite-data:
