@@ -1,7 +1,6 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.File;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,67 +11,61 @@ namespace CloudFileStore.Azure
     public class AzureBlobStorageProvider : IStorageProvider
     {
         private readonly AzureBlobConfiguration _configuration;
-        private readonly CloudBlobContainer _blobContainer;
-        private BlobContinuationToken _continuationToken;
+        private readonly BlobContainerClient _blobContainer;
+        private string _continuationToken;
 
         public AzureBlobStorageProvider(AzureBlobConfiguration configuration)
         {
             _configuration = configuration;
 
-            CloudStorageAccount storageAccount;
-            CloudStorageAccount.TryParse(configuration.ConnectionString, out storageAccount);
-
-            var client = storageAccount.CreateCloudBlobClient();
-            _blobContainer = client.GetContainerReference(configuration.ContainerName);
+            var blobServiceClient = new BlobServiceClient(configuration.ConnectionString);
+            _blobContainer = blobServiceClient.GetBlobContainerClient(configuration.ContainerName);
         }
 
         public async Task DeleteFileAsync(string filename)
         {
-            var blob = _blobContainer.GetBlobReference(filename);
-            await blob.DeleteIfExistsAsync();
+            var blobClient = _blobContainer.GetBlobClient(filename);
+            await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task<bool> FileExistsAsync(string filename)
         {
-            var blob = _blobContainer.GetBlobReference(filename);
-            return await blob.ExistsAsync();
+            var blobClient = _blobContainer.GetBlobClient(filename);
+            var response = await blobClient.ExistsAsync();
+            return response.Value;
         }
 
         public async Task<IEnumerable<string>> ListFilesAsync(int pageSize = 100, bool pagingEnabled = true)
         {
-            BlobResultSegment segment = null;
+            var blobs = _blobContainer.GetBlobsAsync();
+            var pages = blobs.AsPages(pagingEnabled ? _continuationToken : null, pageSize);
 
-            if (pagingEnabled)
+            var results = new List<string>();
+            await foreach (var page in pages)
             {
-                segment = await _blobContainer.ListBlobsSegmentedAsync("", true, BlobListingDetails.All, pageSize, _continuationToken, new BlobRequestOptions(), new OperationContext());
-                _continuationToken = segment.ContinuationToken;
-            }
-            else
-            {
-                segment = await _blobContainer.ListBlobsSegmentedAsync(null);
+                _continuationToken = page.ContinuationToken;
+                results.AddRange(page.Values.Select(x => x.Name));
+                break;
             }
 
-            return segment.Results
-                          .Select(x => Path.GetFileName(x.Uri.LocalPath));
+            return results;
         }
 
         public async Task<string> LoadTextFileAsync(string filename)
         {
-            CloudBlob blob = _blobContainer.GetBlobReference(filename);
-
-            using (var stream = await blob.OpenReadAsync())
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    return await reader.ReadToEndAsync();
-                }
-            }
+            var blobClient = _blobContainer.GetBlobClient(filename);
+            var response = await blobClient.DownloadContentAsync();
+            return response.Value.Content.ToString();
         }
 
         public async Task SaveTextFileAsync(string filePath, string fileContent, string contentType = "text/plain")
         {
-            CloudBlockBlob blob = _blobContainer.GetBlockBlobReference(filePath);
-            await blob.UploadTextAsync(fileContent);
+            var blobClient = _blobContainer.GetBlobClient(filePath);
+            var options = new BlobUploadOptions
+            {
+                HttpHeaders = new BlobHttpHeaders { ContentType = contentType }
+            };
+            await blobClient.UploadAsync(new BinaryData(fileContent), options);
         }
     }
 }

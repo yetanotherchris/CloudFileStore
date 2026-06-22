@@ -20,6 +20,6 @@
 	<ItemGroup>
 		<PackageReference Include="Google.Cloud.Storage.V1" />
 		<PackageReference Include="AWSSDK.S3" />
-		<PackageReference Include="WindowsAzure.Storage" />
+		<PackageReference Include="Azure.Storage.Blobs" />
 	</ItemGroup>
 </Project>

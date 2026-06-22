@@ -7,7 +7,7 @@ on:
         description: '.NET version to use'
         required: false
         type: string
-        default: '9.0.x'
+        default: '10.0.x'
     secrets:
       GOOGLE_AUTH_JSON:
         description: 'Google Cloud service account JSON'
@@ -18,7 +18,7 @@ on:
         description: '.NET version to use'
         required: false
         type: string
-        default: '9.0.x'
+        default: '10.0.x'
 
 jobs:
   integration-tests:
@@ -51,7 +51,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Start LocalStack and Azurite services
+    - name: Start moto and Azurite services
       working-directory: src/CloudFileStore.Tests
       run: docker compose up -d
 
@@ -63,8 +63,8 @@ jobs:
         echo "Checking service health..."
         docker ps
 
-        # Wait for LocalStack to be ready
-        timeout 30 bash -c 'until curl -s http://localhost:4566/_health | grep -q "\"s3\":\"running\""; do sleep 1; done' || echo "LocalStack health check timeout"
+        # Wait for moto to be ready
+        timeout 30 bash -c 'until curl -s http://localhost:4566/moto-api/ > /dev/null 2>&1; do sleep 1; done' || echo "moto health check timeout"
 
         # Verify Azurite is responding
         timeout 10 bash -c 'until curl -s http://localhost:10000/devstoreaccount1?comp=list; do sleep 1; done' || echo "Azurite connection check timeout"
@@ -75,8 +75,8 @@ jobs:
       if: always()
       working-directory: src/CloudFileStore.Tests
       run: |
-        echo "=== LocalStack Logs ==="
-        docker compose logs localstack
+        echo "=== moto Logs ==="
+        docker compose logs moto
         echo "=== Azurite Logs ==="
         docker compose logs azurite
         echo "=== Init Logs ==="

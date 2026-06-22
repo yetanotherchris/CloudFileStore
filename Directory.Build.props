@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<!-- Common target framework -->
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 
 		<!-- Package metadata -->
 		<Authors>C.Small</Authors>

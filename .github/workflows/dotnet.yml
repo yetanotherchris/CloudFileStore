@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION_NUMBER: "9.0"
+      VERSION_NUMBER: "10.0"
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
     steps:
@@ -24,7 +24,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Restore dependencies
       run: dotnet restore
@@ -36,7 +36,7 @@ jobs:
     needs: build
     uses: ./.github/workflows/integration-tests.yml
     with:
-      dotnet-version: '9.0.x'
+      dotnet-version: '10.0.x'
     secrets:
       GOOGLE_AUTH_JSON: ${{ secrets.GOOGLE_AUTH_JSON }}
 
@@ -44,7 +44,7 @@ jobs:
     needs: integration-tests
     runs-on: ubuntu-latest
     env:
-      VERSION_NUMBER: "9.0"
+      VERSION_NUMBER: "10.0"
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
     steps:
@@ -54,7 +54,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Restore dependencies
       run: dotnet restore
