@@ -7,7 +7,7 @@ on:
         description: '.NET version to use'
         required: false
         type: string
-        default: '10.0.x'
+        default: '11.0.x'
     secrets:
       GOOGLE_AUTH_JSON:
         description: 'Google Cloud service account JSON'
@@ -18,7 +18,7 @@ on:
         description: '.NET version to use'
         required: false
         type: string
-        default: '10.0.x'
+        default: '11.0.x'
 
 jobs:
   integration-tests:
