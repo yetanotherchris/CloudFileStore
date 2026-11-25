@@ -22,7 +22,9 @@ namespace CloudFileStore.GoogleCloud
             _configuration = configuration;
 
             string json = JsonSerializer.Serialize(_configuration);
-            GoogleCredential credential = GoogleCredential.FromJson(json);
+            GoogleCredential credential = CredentialFactory
+                .FromJson<ServiceAccountCredential>(json)
+                .ToGoogleCredential();
 
             _storageClient = StorageClient.Create(credential);
         }
