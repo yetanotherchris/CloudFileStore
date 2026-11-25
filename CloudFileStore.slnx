@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/CloudFileStore.Tests/CloudFileStore.Tests.csproj" />
+  <Project Path="src/CloudFileStore/CloudFileStore.csproj" />
+</Solution>
